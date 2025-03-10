@@ -6,6 +6,7 @@ English | [中文](README_zh.md)
 [![Discord Follow](https://dcbadge.vercel.app/api/server/DYn29wFk9z?style=flat)](https://discord.gg/DYn29wFk9z)
 
 # AAPLA Manus forked from OpenManus
+Autonomous Agent Platform for Learning and Action
 
 [Official Website](https://openmanus.github.io/)
 
