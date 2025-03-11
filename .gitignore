@@ -178,3 +178,8 @@ data/
 
 # Workspace
 workspace/
+
+# API credentials
+config.toml
+secrets.toml
+*credentials*.toml
