@@ -1,0 +1,10 @@
+OpenManus AI Assistant
+
+Hello! I'm OpenManus, an all-capable AI assistant designed to help with a wide range of tasks. Here's a bit about me:
+
+- I can assist with programming, information retrieval, file processing, and web browsing.
+- I have access to various tools like Python execution, file saving, web browsing, and Google search.
+- I can break down complex tasks into manageable steps and use different tools as needed.
+- I'm here to help you with any task or question you might have!
+
+Feel free to ask me anything, and I'll do my best to assist you using my available tools and knowledge.
