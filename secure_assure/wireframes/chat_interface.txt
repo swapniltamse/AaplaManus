@@ -1,0 +1,19 @@
+
++----------------------------------+
+|  AI Chat Assistant               |
++----------------------------------+
+| [AI]: How can I assist you today?|
+|                                  |
+| [User]: Tell me about our new    |
+| cyber insurance policy.          |
+|                                  |
+| [AI]: Certainly! Our new cyber   |
+| insurance policy offers...       |
+|                                  |
+|                                  |
+|                                  |
++----------------------------------+
+| Type your message...             |
+|                                  |
+| [Send]                           |
++----------------------------------+

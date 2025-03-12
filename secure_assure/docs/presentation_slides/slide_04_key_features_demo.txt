@@ -1,0 +1,16 @@
+Slide 4: Key Features Demo
+
+Content:
+1. Modern, responsive dashboard
+   - Client portfolio overview
+   - Active policies by type
+   - Upcoming renewals
+   - Sales performance trends
+   - Commission tracking
+
+2. AI-powered chat assistant
+   - Quick information retrieval
+   - Cross-sell/upsell suggestions
+   - Simplified policy explanations
+
+Note: This section may require multiple slides to adequately showcase each feature. Consider creating separate slides for the dashboard and AI chat assistant if needed.

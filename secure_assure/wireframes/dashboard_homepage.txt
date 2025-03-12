@@ -1,0 +1,20 @@
+
++----------------------------------+
+|  SecureAssure Dashboard          |
++----------------------------------+
+| Client Portfolio | Active Policies
+|  [Pie Chart]     | [Bar Chart]   |
+|                  |               |
++----------------------------------+
+| Upcoming Renewals| Sales Trends  |
+| [Table]          | [Line Graph]  |
+|                  |               |
++----------------------------------+
+| Commission Tracking              |
+| [Area Chart]                     |
+|                                  |
++----------------------------------+
+| AI Chat Assistant                |
+| [Chat Interface]                 |
+|                                  |
++----------------------------------+

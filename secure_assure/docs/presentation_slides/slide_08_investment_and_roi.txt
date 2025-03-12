@@ -1,0 +1,20 @@
+Slide 8: Investment and ROI
+
+Content:
+1. Required resources and budget
+   - Development team: 5 full-time developers, 2 UX designers, 1 project manager
+   - Infrastructure costs: AWS services, third-party integrations
+   - Training and support: For advisors and support staff
+   - Estimated total investment: $X million over 18 months
+
+2. Projected return on investment
+   - Year 1: Break-even
+   - Year 2: 15% increase in policy sales
+   - Year 3: 25% increase in policy sales, 10% reduction in operational costs
+
+3. Long-term cost savings and revenue growth
+   - 30% reduction in time spent on administrative tasks
+   - 20% increase in client retention rates
+   - 40% increase in cross-selling and upselling success
+
+Note: Add a graph showing the projected ROI over a 5-year period. Include a breakdown of costs vs. revenue/savings.

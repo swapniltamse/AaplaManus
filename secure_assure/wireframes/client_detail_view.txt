@@ -1,0 +1,22 @@
+
++----------------------------------+
+|  Client: John Doe                |
++----------------------------------+
+| Personal Info | Policy Summary   |
+| Name: John Doe| Active: 3        |
+| Age: 45       | Pending: 1       |
+| Address: ...  | Total Value: $X  |
++----------------------------------+
+| Policy Details                   |
+| 1. Auto Insurance  [Details]     |
+| 2. Home Insurance  [Details]     |
+| 3. Life Insurance  [Details]     |
++----------------------------------+
+| Recommendations                  |
+| - Umbrella Policy                |
+| - Increase Life Coverage         |
++----------------------------------+
+| Notes & Communication History    |
+| [Text Area]                      |
+|                                  |
++----------------------------------+

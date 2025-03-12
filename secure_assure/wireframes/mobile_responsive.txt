@@ -1,0 +1,19 @@
+
++------------------+
+| SecureAssure     |
++------------------+
+| Dashboard        |
+| [Summary Stats]  |
+|                  |
+| Client List      |
+| - John Doe       |
+| - Jane Smith     |
+| - Bob Johnson    |
+|                  |
+| Quick Actions    |
+| [New Policy]     |
+| [Renewals]       |
+|                  |
+| AI Chat          |
+| [Open Chat]      |
++------------------+
