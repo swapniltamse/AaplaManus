@@ -1,7 +1,8 @@
-[![GitHub stars](https://img.shields.io/github/stars/mannaandpoem/OpenManus?style=social)](https://github.com/mannaandpoem/OpenManus/stargazers)
-&ensp;
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) &ensp;
-[![Discord Follow](https://dcbadge.vercel.app/api/server/DYn29wFk9z?style=flat)](https://discord.gg/DYn29wFk9z)
+Update 4/6:
+
+![image](https://github.com/user-attachments/assets/4b4ce2fe-a95f-48b0-95f9-2e60392afcff)
+Actual Manus Beta in play
+--------------------------------------------------------------------------------------------------------------
 
 # AAPLA Manus forked from OpenManus
 Autonomous Agent Platform for Learning and Action
