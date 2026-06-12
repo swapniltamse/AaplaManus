@@ -1,7 +1,8 @@
+import os
 import threading
 import tomllib
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from pydantic import BaseModel, Field
 
@@ -22,7 +23,7 @@ class LLMSettings(BaseModel):
     max_tokens: int = Field(4096, description="Maximum number of tokens per request")
     temperature: float = Field(1.0, description="Sampling temperature")
     api_type: str = Field(..., description="AzureOpenai or Openai")
-    api_version: str = Field(..., description="Azure Openai version if AzureOpenai")
+    api_version: str = Field("", description="Azure Openai version if AzureOpenai")
 
 
 class AppConfig(BaseModel):
@@ -46,6 +47,8 @@ class Config:
             with self._lock:
                 if not self._initialized:
                     self._config = None
+                    self._llm_config: Optional[LLMSettings] = None
+                    self._llm_configs: Dict[str, LLMSettings] = {}
                     self._load_initial_config()
                     self._initialized = True
 
@@ -93,10 +96,25 @@ class Config:
         }
 
         self._config = AppConfig(**config_dict)
+        self._llm_configs = self._config.llm
+        self._llm_config = self._llm_configs["default"]
+
+        # Allow Docker networking to override Ollama host
+        ollama_host = os.getenv("OLLAMA_HOST")
+        if ollama_host:
+            for settings in self._llm_configs.values():
+                if settings.base_url and "11434" in settings.base_url:
+                    settings.base_url = f"{ollama_host}/v1"
+            if self._llm_config.base_url and "11434" in self._llm_config.base_url:
+                self._llm_config.base_url = f"{ollama_host}/v1"
 
     @property
-    def llm(self) -> Dict[str, LLMSettings]:
-        return self._config.llm
+    def llm(self) -> LLMSettings:
+        return self._llm_config
+
+    @property
+    def llm_configs(self) -> Dict[str, LLMSettings]:
+        return self._llm_configs
 
 
 config = Config()
