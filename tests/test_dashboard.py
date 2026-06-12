@@ -14,6 +14,7 @@ def reset_cost_service():
     new_instance = CostService()
     cs_module.cost_service = new_instance
     yield
+    cs_module.cost_service._conn.close()
     CostService._instance = None
     os.environ.pop("COST_DB_PATH", None)
 

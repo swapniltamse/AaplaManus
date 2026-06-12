@@ -2,6 +2,7 @@ import asyncio
 import uuid
 from datetime import datetime
 from json import dumps
+from typing import Optional
 
 from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -236,7 +237,7 @@ async def get_task(task_id: str):
 
 
 @app.get("/dashboard/stats")
-async def get_dashboard_stats(session_id: str = None):
+async def get_dashboard_stats(session_id: Optional[str] = None):
     return _cost_service_module.cost_service.get_stats(session_id=session_id)
 
 
