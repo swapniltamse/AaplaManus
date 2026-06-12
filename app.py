@@ -95,6 +95,7 @@ async def create_task(prompt: str = Body(..., embed=True)):
 
 
 from app.agent.manus import Manus
+import app.cost_service as _cost_service_module
 
 
 async def run_task(task_id: str, prompt: str):
@@ -232,6 +233,11 @@ async def get_task(task_id: str):
     if task_id not in task_manager.tasks:
         raise HTTPException(status_code=404, detail="Task not found")
     return task_manager.tasks[task_id]
+
+
+@app.get("/dashboard/stats")
+async def get_dashboard_stats(session_id: str = None):
+    return _cost_service_module.cost_service.get_stats(session_id=session_id)
 
 
 @app.exception_handler(Exception)
