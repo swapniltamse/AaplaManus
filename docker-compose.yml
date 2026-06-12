@@ -10,9 +10,10 @@ services:
       - OLLAMA_HOST=http://ollama:11434
       - DEFAULT_MODEL=${DEFAULT_MODEL:-llama3.2:latest}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
     volumes:
       - ./workspace:/app/workspace
-      - ./config/config.toml:/app/config/config.toml
+      - ./config:/app/config
     restart: unless-stopped
 
   ollama:
