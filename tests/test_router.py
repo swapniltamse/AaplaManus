@@ -42,3 +42,9 @@ def test_browser_plus_code_flags_complex():
 def test_model_name_is_non_empty():
     result = classify("hello")
     assert result.model_name
+
+
+def test_write_a_non_code_does_not_route_to_code_expert():
+    result = classify("Write a cover letter for a software engineering position")
+    assert result.model_key != CODE_EXPERT
+    assert result.needs_code is False

@@ -17,7 +17,7 @@ _BROWSER_RE = re.compile(
     re.IGNORECASE,
 )
 _CODE_RE = re.compile(
-    r"\b(code|script|program|function|class|implement|build|write a|python|javascript|bash|sql)\b",
+    r"\b(code|script|program|function|class|implement|build|python|javascript|bash|sql)\b",
     re.IGNORECASE,
 )
 _FILE_RE = re.compile(
@@ -28,7 +28,7 @@ _FILE_RE = re.compile(
 _COMPLEX_WORD_THRESHOLD = 80
 
 
-@dataclass
+@dataclass(frozen=True)
 class RouteDecision:
     model_key: str
     model_name: str
@@ -43,6 +43,7 @@ def classify(prompt: str) -> RouteDecision:
     needs_browser = bool(_BROWSER_RE.search(prompt))
     needs_code = bool(_CODE_RE.search(prompt))
     needs_file = bool(_FILE_RE.search(prompt))
+    # Reserved for cloud escalation in Orchestrator — does not affect local model routing
     is_complex = word_count > _COMPLEX_WORD_THRESHOLD or (needs_browser and needs_code)
 
     if needs_code:
