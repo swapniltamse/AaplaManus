@@ -1,0 +1,27 @@
+services:
+  aaplamanus:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      ollama:
+        condition: service_started
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-llama3.2:latest}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    volumes:
+      - ./workspace:/app/workspace
+      - ./config/config.toml:/app/config/config.toml
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
