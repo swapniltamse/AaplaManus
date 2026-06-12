@@ -1,5 +1,5 @@
 [llm]
-model = "llama3.3:8b"
+model = "llama3.2:latest"
 base_url = "http://localhost:11434/v1"
 api_key = "ollama"
 api_type = "Openai"

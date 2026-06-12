@@ -105,8 +105,6 @@ class Config:
             for settings in self._llm_configs.values():
                 if settings.base_url and "11434" in settings.base_url:
                     settings.base_url = f"{ollama_host}/v1"
-            if self._llm_config.base_url and "11434" in self._llm_config.base_url:
-                self._llm_config.base_url = f"{ollama_host}/v1"
 
     @property
     def llm(self) -> LLMSettings:
