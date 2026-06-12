@@ -19,15 +19,16 @@ class CostService:
         return cls._instance
 
     def __init__(self):
-        if self._initialized:
-            return
-        db_path = os.getenv("COST_DB_PATH", "workspace/aaplamanus.db")
-        if db_path != ":memory:":
-            Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-        self._conn = sqlite3.connect(db_path, check_same_thread=False)
-        self._lock = Lock()
-        self._init_schema()
-        self._initialized = True
+        with self.__class__._class_lock:
+            if self._initialized:
+                return
+            db_path = os.getenv("COST_DB_PATH", "workspace/aaplamanus.db")
+            if db_path != ":memory:":
+                Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+            self._conn = sqlite3.connect(db_path, check_same_thread=False)
+            self._lock = Lock()
+            self._init_schema()
+            self._initialized = True
 
     def _init_schema(self):
         with self._lock:
@@ -87,8 +88,11 @@ class CostService:
     def get_stats(self, session_id: str = None) -> dict:
         with self._lock:
             row = self._conn.execute(
-                "SELECT COALESCE(SUM(total_saved_usd),0), COALESCE(SUM(total_tokens),0), COUNT(*) FROM sessions"
+                "SELECT COALESCE(SUM(total_saved_usd),0), COALESCE(SUM(total_tokens),0) FROM sessions"
             ).fetchone()
+            task_count = self._conn.execute(
+                "SELECT COUNT(*) FROM token_log"
+            ).fetchone()[0]
             session_saved = 0.0
             if session_id:
                 r = self._conn.execute(
@@ -103,7 +107,7 @@ class CostService:
             "session_saved_usd": round(session_saved, 2),
             "alltime_saved_usd": round(row[0], 2),
             "alltime_tokens": row[1],
-            "tasks_completed": row[2],
+            "tasks_completed": task_count,
             "most_used_agent": top[0] if top else None,
         }
 

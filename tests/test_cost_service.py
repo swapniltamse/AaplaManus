@@ -6,8 +6,11 @@ from app.cost_service import CostService
 
 @pytest.fixture(autouse=True)
 def fresh_service():
+    import app.cost_service as cs_module
     os.environ["COST_DB_PATH"] = ":memory:"
     CostService._instance = None
+    new_instance = CostService()
+    cs_module.cost_service = new_instance
     yield
     CostService._instance = None
     os.environ.pop("COST_DB_PATH", None)
@@ -27,8 +30,8 @@ def test_get_stats_alltime_totals():
     svc.log("session-1", "file_agent", "llama3.2:latest", 500, 1000)
     svc.log("session-1", "research_agent", "llama3.2:latest", 500, 1000)
     stats = svc.get_stats()
-    assert stats["alltime_saved_usd"] > 0
-    assert stats["tasks_completed"] == 1  # 1 session
+    assert abs(stats["alltime_saved_usd"] - 0.03) < 0.0001
+    assert stats["tasks_completed"] == 2  # 2 token_log rows
 
 
 def test_get_stats_per_session():
@@ -37,9 +40,8 @@ def test_get_stats_per_session():
     svc.log("session-B", "file_agent", "llama3.2:latest", 1000, 1000)
     stats_a = svc.get_stats(session_id="session-A")
     stats_b = svc.get_stats(session_id="session-B")
-    assert stats_a["session_saved_usd"] > 0
-    assert stats_b["session_saved_usd"] > 0
-    assert abs(stats_a["session_saved_usd"] - stats_b["session_saved_usd"]) < 0.0001
+    assert abs(stats_a["session_saved_usd"] - 0.020) < 0.0001
+    assert abs(stats_b["session_saved_usd"] - 0.020) < 0.0001
 
 
 def test_most_used_agent():
