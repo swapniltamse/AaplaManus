@@ -6,9 +6,6 @@ from threading import Lock
 _GPT4O_INPUT_PER_1K = 0.005
 _GPT4O_OUTPUT_PER_1K = 0.015
 
-_DB_PATH = os.getenv("COST_DB_PATH", "workspace/aaplamanus.db")
-
-
 class CostService:
     _instance = None
     _class_lock = Lock()
@@ -24,9 +21,10 @@ class CostService:
     def __init__(self):
         if self._initialized:
             return
-        if _DB_PATH != ":memory:":
-            Path(_DB_PATH).parent.mkdir(parents=True, exist_ok=True)
-        self._conn = sqlite3.connect(_DB_PATH, check_same_thread=False)
+        db_path = os.getenv("COST_DB_PATH", "workspace/aaplamanus.db")
+        if db_path != ":memory:":
+            Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        self._conn = sqlite3.connect(db_path, check_same_thread=False)
         self._lock = Lock()
         self._init_schema()
         self._initialized = True

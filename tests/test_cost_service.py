@@ -1,16 +1,16 @@
 import os
 import pytest
 
-os.environ["COST_DB_PATH"] = ":memory:"
-
 from app.cost_service import CostService
 
 
 @pytest.fixture(autouse=True)
 def fresh_service():
+    os.environ["COST_DB_PATH"] = ":memory:"
     CostService._instance = None
     yield
     CostService._instance = None
+    os.environ.pop("COST_DB_PATH", None)
 
 
 def test_log_returns_correct_saved_amount():
