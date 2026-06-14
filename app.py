@@ -95,69 +95,17 @@ async def create_task(prompt: str = Body(..., embed=True)):
     return {"task_id": task.id}
 
 
-from app.agent.manus import Manus
 import app.cost_service as _cost_service_module
+from app.orchestrator import Orchestrator
+
+_orchestrator = Orchestrator()
 
 
 async def run_task(task_id: str, prompt: str):
     try:
         task_manager.tasks[task_id].status = "running"
-
-        agent = Manus(
-            name="Manus",
-            description="A versatile agent that can solve various tasks using multiple tools",
-            max_steps=30,
-        )
-
-        async def on_think(thought):
-            await task_manager.update_task_step(task_id, 0, thought, "think")
-
-        async def on_tool_execute(tool, input):
-            await task_manager.update_task_step(
-                task_id, 0, f"Executing tool: {tool}\nInput: {input}", "tool"
-            )
-
-        async def on_action(action):
-            await task_manager.update_task_step(
-                task_id, 0, f"Executing action: {action}", "act"
-            )
-
-        async def on_run(step, result):
-            await task_manager.update_task_step(task_id, step, result, "run")
-
-        from app.logger import logger
-
-        class SSELogHandler:
-            def __init__(self, task_id):
-                self.task_id = task_id
-
-            async def __call__(self, message):
-                import re
-
-                # 提取 - 后面的内容
-                cleaned_message = re.sub(r"^.*? - ", "", message)
-
-                event_type = "log"
-                if "✨ Manus's thoughts:" in cleaned_message:
-                    event_type = "think"
-                elif "🛠️ Manus selected" in cleaned_message:
-                    event_type = "tool"
-                elif "🎯 Tool" in cleaned_message:
-                    event_type = "act"
-                elif "📝 Oops!" in cleaned_message:
-                    event_type = "error"
-                elif "🏁 Special tool" in cleaned_message:
-                    event_type = "complete"
-
-                await task_manager.update_task_step(
-                    self.task_id, 0, cleaned_message, event_type
-                )
-
-        sse_handler = SSELogHandler(task_id)
-        logger.add(sse_handler)
-
-        result = await agent.run(prompt)
-        await task_manager.update_task_step(task_id, 1, result, "result")
+        result = await _orchestrator.run(task_id=task_id, prompt=prompt)
+        await task_manager.update_task_step(task_id, 1, result, "run")
         await task_manager.complete_task(task_id)
     except Exception as e:
         await task_manager.fail_task(task_id, str(e))
