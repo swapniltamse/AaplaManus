@@ -21,4 +21,4 @@ class AgentResult:
     agent_name: str
     output: str
     tokens_used: int
-    steps: list = field(default_factory=list)  # list[AgentStep]
+    steps: list[AgentStep] = field(default_factory=list)

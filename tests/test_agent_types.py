@@ -33,3 +33,18 @@ def test_agent_step_defaults():
 def test_agent_step_custom_status():
     s = AgentStep(description="Searching", status="error")
     assert s.status == "error"
+
+
+def test_agent_result_steps_isolation():
+    r1 = AgentResult(task_id="t1", agent_name="agent1", output="out", tokens_used=50)
+    r2 = AgentResult(task_id="t2", agent_name="agent2", output="out", tokens_used=50)
+    r1.steps.append(AgentStep(description="step1"))
+    assert len(r1.steps) == 1
+    assert len(r2.steps) == 0
+
+
+def test_agent_task_context_isolation():
+    t1 = AgentTask(task_id="t1", prompt="hello")
+    t2 = AgentTask(task_id="t2", prompt="world")
+    t1.context["key"] = "value"
+    assert "key" not in t2.context
