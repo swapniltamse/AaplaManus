@@ -1,0 +1,16 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+*.pyo
+.env
+assets/
+example-prompt-responses/
+run.bat
+run_flow.py
+main.py
+setup.py
+workspace/
+docs/
+tests/
+config/config.toml
