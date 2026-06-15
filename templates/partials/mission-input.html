@@ -1,0 +1,25 @@
+<div class="mission-title">Brief Manus</div>
+
+<form id="mission-form">
+  <textarea
+    id="prompt-input"
+    class="mission-input"
+    placeholder="What's the mission?"
+    rows="3"
+  ></textarea>
+
+  <div class="model-indicator">
+    Using: <span id="model-label" class="model-label">Fast Local</span>
+    <div class="tooltip-wrap" x-data="{ open: false }">
+      <span class="tooltip-trigger" @click="open = !open">[?]</span>
+      <div class="tooltip-body" x-show="open" x-cloak>
+        <strong>Fast Local</strong> — Quick answers. Runs on your device.<br>
+        <strong>Smart Local</strong> — Best for research. Still local.<br>
+        <strong>Code Expert</strong> — Specialized for code. Runs locally.<br>
+        <strong>Cloud</strong> — Sends data to external servers. Costs money.
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn-primary" hx-post="/tasks">Run mission</button>
+</form>

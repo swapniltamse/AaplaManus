@@ -1,0 +1,19 @@
+<h2>Recent Missions</h2>
+
+{% if tasks %}
+  {% for task in tasks %}
+  <div class="history-item">
+    <div class="history-prompt">{{ task.prompt[:60] }}{% if task.prompt|length > 60 %}…{% endif %}</div>
+    <div class="history-status">
+      {% if task.status == "completed" %}Done
+      {% elif task.status == "running" %}Running...
+      {% elif task.status.startswith("failed") %}Failed
+      {% else %}{{ task.status }}{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="history-empty">No missions yet</div>
+{% endif %}
+
+<div class="savings-total">Saved ${{ "%.2f"|format(total_savings) }} total</div>
