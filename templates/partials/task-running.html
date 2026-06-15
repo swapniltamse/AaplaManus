@@ -1,1 +1,17 @@
-<div id="task-feed" data-task-id="{{ task_id }}"><div id="feed"></div></div>
+<div class="feed-header">
+  <div class="feed-mission">Running mission...</div>
+  <div class="feed-model">
+    Smart Local
+    <div class="tooltip-wrap" x-data="{ open: false }">
+      <span class="tooltip-trigger" @click="open = !open">[?]</span>
+      <div class="tooltip-body" x-show="open" x-cloak>
+        A powerful model running on your own hardware. Nothing sent to the internet.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="task-feed" data-task-id="{{ task_id }}">
+  <div id="feed"></div>
+  <div class="savings-live" id="savings-live">Saved $0.00 so far</div>
+</div>
