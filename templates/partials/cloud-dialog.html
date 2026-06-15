@@ -1,0 +1,30 @@
+<div class="cloud-dialog">
+  <div class="cloud-dialog-header">
+    <div class="dot-amber"></div>
+    <div class="cloud-dialog-headline">Data will leave this device</div>
+  </div>
+
+  <div class="cloud-dialog-body">
+    Sending to {{ model }}. Your prompt and any attached files will be processed on external servers.
+  </div>
+
+  <div class="cost-row">
+    <span class="cost-label">Estimated cost</span>
+    <span class="cost-value">${{ "%.2f"|format(estimated_cost) }}</span>
+  </div>
+
+  <div class="cloud-actions">
+    <button
+      class="btn-approve"
+      hx-post="/tasks/cloud-approve"
+      hx-vals='{"task_id": "{{ task_id }}"}'
+      hx-target="#right-panel"
+      hx-swap="innerHTML">
+      Approve and send to cloud
+    </button>
+
+    <button class="btn-local" onclick="location.reload()">
+      Run locally instead
+    </button>
+  </div>
+</div>
