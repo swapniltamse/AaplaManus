@@ -53,6 +53,7 @@ static/
 ```python
 GET  /health/ollama          # 200 {"status":"ok"} or 503 {"status":"unavailable"}
 GET  /partials/history       # renders partials/history.html — HTMX swap target
+GET  /classify               # ?prompt=... → {"model": "Fast Local", "label": "Fast Local"} — drives model indicator
 POST /tasks/cloud-approve    # accepts {task_id} — starts task on cloud model
 ```
 
