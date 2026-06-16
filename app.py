@@ -155,7 +155,7 @@ async def history_partial(request: Request):
         {
             "request": request,
             "tasks": sorted_tasks[:20],
-            "total_savings": stats.get("total_savings_usd", 0.0),
+            "total_savings": stats.get("alltime_saved_usd", 0.0),
         },
     )
 

@@ -41,8 +41,9 @@ def test_history_partial_renders(client):
     with patch.object(
         app_module._cost_service_module.cost_service,
         "get_stats",
-        return_value={"total_savings_usd": 0.0},
+        return_value={"alltime_saved_usd": 1.23},
     ):
         response = client.get("/partials/history")
     assert response.status_code == 200
     assert "No missions" in response.text or "Saved $" in response.text
+    assert "Saved $1.23 total" in response.text

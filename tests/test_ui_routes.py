@@ -21,7 +21,8 @@ def test_home_returns_htmx_form(client):
     with patch.object(app_module, "_check_ollama", new=AsyncMock(return_value=True)):
         response = client.get("/")
     assert response.status_code == 200
-    assert 'hx-post="/tasks"' in response.text
+    assert 'hx-get="/partials/history"' in response.text
+    assert 'id="mission-form"' in response.text
 
 
 def test_ollama_health_ok(client):

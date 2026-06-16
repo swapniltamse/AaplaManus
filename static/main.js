@@ -67,25 +67,10 @@ function connectSSE(taskId) {
   const source = new EventSource(`/tasks/${taskId}/events`);
   let activeLine = null;
 
-  source.onmessage = (e) => {
+  // Server sends explicit `event:` names (think/tool/act/run/step/complete/error),
+  // so onmessage never fires — EventSource only invokes it for unnamed "message" events.
+  const handleStep = (e) => {
     const data = JSON.parse(e.data);
-
-    if (data.type === "complete") {
-      source.close();
-      htmx.ajax("GET", `/partials/task-complete?task_id=${taskId}`, {
-        target: "#right-panel",
-        swap: "innerHTML",
-      });
-      htmx.trigger("#history-panel", "refresh");
-      return;
-    }
-
-    if (data.type === "error") {
-      appendLine(feed, data.message || "An error occurred.", "error");
-      source.close();
-      return;
-    }
-
     if (activeLine) {
       activeLine.classList.remove("active");
       activeLine.classList.add("done");
@@ -93,8 +78,28 @@ function connectSSE(taskId) {
     activeLine = appendLine(feed, LABELS[data.type] ?? data.result, "active");
     feed.scrollTop = feed.scrollHeight;
   };
+  ["think", "tool", "act", "run", "step"].forEach((type) => {
+    source.addEventListener(type, handleStep);
+  });
 
-  source.onerror = () => source.close();
+  source.addEventListener("complete", () => {
+    source.close();
+    htmx.ajax("GET", `/partials/task-complete?task_id=${taskId}`, {
+      target: "#right-panel",
+      swap: "innerHTML",
+    });
+    htmx.trigger("#history-panel", "refresh");
+  });
+
+  // "error" fires both for the server's named error event (has e.data) and for
+  // native connection failures (no e.data) — EventSource treats both as the same type.
+  source.addEventListener("error", (e) => {
+    if (e.data) {
+      const data = JSON.parse(e.data);
+      appendLine(feed, data.message || "An error occurred.", "error");
+    }
+    source.close();
+  });
 }
 
 function appendLine(feed, text, cssClass) {
