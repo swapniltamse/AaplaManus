@@ -108,9 +108,20 @@ JS interval logic is not unit-tested. Coverage comes from the manual flow: run a
 
 ---
 
+## CSS
+
+Add one rule to `style.css` for the new stat lines:
+
+```css
+.stat-line {
+  font-size: 0.75rem;
+  color: var(--muted, #64748b);
+  margin-top: 0.25rem;
+}
+```
+
 ## What Is Not In Scope
 
-- CSS styling for `.stat-line` beyond what already exists in `style.css`
 - Alltime token count display
 - Per-agent breakdown table
 - WebSocket push (polling is sufficient at 2s cadence)
