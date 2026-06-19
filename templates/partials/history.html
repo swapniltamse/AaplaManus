@@ -17,3 +17,7 @@
 {% endif %}
 
 <div class="savings-total">Saved ${{ "%.2f"|format(total_savings) }} total</div>
+<div class="stat-line">{{ tasks_completed }} tasks completed</div>
+{% if most_used_agent %}
+<div class="stat-line">Most used: {{ most_used_agent }}</div>
+{% endif %}

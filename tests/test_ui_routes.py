@@ -58,3 +58,23 @@ def test_cloud_approve_starts_task(client):
     response = client.post("/tasks/cloud-approve", json={"task_id": task_id})
     assert response.status_code == 200
     assert task_id in response.text
+
+
+def test_history_partial_includes_task_count(client):
+    with patch.object(
+        app_module._cost_service_module.cost_service,
+        "get_stats",
+        return_value={"alltime_saved_usd": 0.0, "tasks_completed": 5, "most_used_agent": None},
+    ):
+        response = client.get("/partials/history")
+    assert "5 tasks completed" in response.text
+
+
+def test_history_partial_includes_most_used_agent(client):
+    with patch.object(
+        app_module._cost_service_module.cost_service,
+        "get_stats",
+        return_value={"alltime_saved_usd": 0.0, "tasks_completed": 1, "most_used_agent": "research_agent"},
+    ):
+        response = client.get("/partials/history")
+    assert "Most used: research_agent" in response.text
