@@ -67,6 +67,15 @@ function connectSSE(taskId) {
   const source = new EventSource(`/tasks/${taskId}/events`);
   let activeLine = null;
 
+  const statsInterval = setInterval(async () => {
+    try {
+      const r = await fetch(`/dashboard/stats?session_id=${taskId}`);
+      const data = await r.json();
+      const el = document.getElementById("savings-live");
+      if (el) el.textContent = `Saved $${data.session_saved_usd.toFixed(2)} so far`;
+    } catch (_) {}
+  }, 2000);
+
   // Server sends explicit `event:` names (think/tool/act/run/step/complete/error),
   // so onmessage never fires — EventSource only invokes it for unnamed "message" events.
   const handleStep = (e) => {
@@ -83,6 +92,7 @@ function connectSSE(taskId) {
   });
 
   source.addEventListener("complete", () => {
+    clearInterval(statsInterval);
     source.close();
     htmx.ajax("GET", `/partials/task-complete?task_id=${taskId}`, {
       target: "#right-panel",
@@ -94,6 +104,7 @@ function connectSSE(taskId) {
   // "error" fires both for the server's named error event (has e.data) and for
   // native connection failures (no e.data) — EventSource treats both as the same type.
   source.addEventListener("error", (e) => {
+    clearInterval(statsInterval);
     if (e.data) {
       const data = JSON.parse(e.data);
       appendLine(feed, data.message || "An error occurred.", "error");

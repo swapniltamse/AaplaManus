@@ -78,3 +78,14 @@ def test_history_partial_includes_most_used_agent(client):
     ):
         response = client.get("/partials/history")
     assert "Most used: research_agent" in response.text
+
+
+def test_dashboard_stats_session_savings_defaults_to_zero(client):
+    with patch.object(
+        app_module._cost_service_module.cost_service,
+        "get_stats",
+        return_value={"session_saved_usd": 0.0, "alltime_saved_usd": 0.0, "alltime_tokens": 0, "tasks_completed": 0, "most_used_agent": None},
+    ):
+        response = client.get("/dashboard/stats?session_id=nonexistent-id")
+    assert response.status_code == 200
+    assert response.json()["session_saved_usd"] == 0.0
