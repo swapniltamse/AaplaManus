@@ -53,10 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+let _cleanupSSE = null;
+
 document.addEventListener("htmx:afterSwap", () => {
+  if (_cleanupSSE) { _cleanupSSE(); _cleanupSSE = null; }
   const feed = document.getElementById("task-feed");
   if (feed && feed.dataset.taskId) {
-    connectSSE(feed.dataset.taskId);
+    _cleanupSSE = connectSSE(feed.dataset.taskId);
   }
 });
 
@@ -72,7 +75,8 @@ function connectSSE(taskId) {
       const r = await fetch(`/dashboard/stats?session_id=${taskId}`);
       const data = await r.json();
       const el = document.getElementById("savings-live");
-      if (el) el.textContent = `Saved $${data.session_saved_usd.toFixed(2)} so far`;
+      const val = typeof data.session_saved_usd === "number" ? data.session_saved_usd : 0;
+      if (el) el.textContent = `Saved $${val.toFixed(2)} so far`;
     } catch (_) {}
   }, 2000);
 
@@ -111,6 +115,8 @@ function connectSSE(taskId) {
     }
     source.close();
   });
+
+  return () => clearInterval(statsInterval);
 }
 
 function appendLine(feed, text, cssClass) {
