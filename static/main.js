@@ -116,7 +116,7 @@ function connectSSE(taskId) {
     source.close();
   });
 
-  return () => clearInterval(statsInterval);
+  return () => { clearInterval(statsInterval); source.close(); };
 }
 
 function appendLine(feed, text, cssClass) {
