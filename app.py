@@ -4,6 +4,8 @@ from datetime import datetime
 from json import dumps
 from typing import Optional
 
+import httpx as _httpx
+
 from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
@@ -83,16 +85,47 @@ class TaskManager:
 task_manager = TaskManager()
 
 
+async def _check_ollama() -> bool:
+    try:
+        async with _httpx.AsyncClient() as c:
+            r = await c.get("http://localhost:11434", timeout=2.0)
+            return r.status_code < 500
+    except Exception:
+        return False
+
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    ollama_ok = await _check_ollama()
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "ollama_ok": ollama_ok}
+    )
+
+
+@app.get("/health/ollama")
+async def health_ollama():
+    ok = await _check_ollama()
+    if ok:
+        return {"status": "ok"}
+    return JSONResponse({"status": "unavailable"}, status_code=503)
 
 
 @app.post("/tasks")
 async def create_task(prompt: str = Body(..., embed=True)):
+    from app.router import classify
+
+    route = classify(prompt)
     task = task_manager.create_task(prompt)
+    if route.is_complex:
+        task_manager.tasks[task.id].status = "pending_approval"
+        return {
+            "task_id": task.id,
+            "requires_approval": True,
+            "estimated_cost": 0.04,
+            "model": "gpt-4o",
+        }
     asyncio.create_task(run_task(task.id, prompt))
-    return {"task_id": task.id}
+    return {"task_id": task.id, "requires_approval": False}
 
 
 import app.cost_service as _cost_service_module
@@ -109,6 +142,80 @@ async def run_task(task_id: str, prompt: str):
         await task_manager.complete_task(task_id)
     except Exception as e:
         await task_manager.fail_task(task_id, str(e))
+
+
+@app.get("/partials/history", response_class=HTMLResponse)
+async def history_partial(request: Request):
+    sorted_tasks = sorted(
+        task_manager.tasks.values(), key=lambda t: t.created_at, reverse=True
+    )
+    stats = _cost_service_module.cost_service.get_stats()
+    return templates.TemplateResponse(
+        "partials/history.html",
+        {
+            "request": request,
+            "tasks": sorted_tasks[:20],
+            "total_savings": stats.get("alltime_saved_usd", 0.0),
+            "tasks_completed": stats.get("tasks_completed", 0),
+            "most_used_agent": stats.get("most_used_agent"),
+        },
+    )
+
+
+@app.get("/partials/task-running", response_class=HTMLResponse)
+async def task_running_partial(request: Request, task_id: str):
+    return templates.TemplateResponse(
+        "partials/task-running.html", {"request": request, "task_id": task_id}
+    )
+
+
+@app.get("/partials/task-complete", response_class=HTMLResponse)
+async def task_complete_partial(request: Request, task_id: str):
+    task = task_manager.tasks.get(task_id)
+    output = ""
+    if task and task.steps:
+        for step in reversed(task.steps):
+            if step.get("type") == "run":
+                output = step.get("result", "")
+                break
+    return templates.TemplateResponse(
+        "partials/task-complete.html", {"request": request, "output": output}
+    )
+
+
+@app.get("/partials/cloud-dialog", response_class=HTMLResponse)
+async def cloud_dialog_partial(
+    request: Request, task_id: str, cost: float = 0.04, model: str = "gpt-4o"
+):
+    return templates.TemplateResponse(
+        "partials/cloud-dialog.html",
+        {"request": request, "task_id": task_id, "estimated_cost": cost, "model": model},
+    )
+
+
+@app.get("/classify")
+async def classify_prompt(prompt: str = ""):
+    from app.router import classify, FAST_LOCAL, SMART_LOCAL, CODE_EXPERT
+
+    LABEL_MAP = {
+        FAST_LOCAL: "Fast Local",
+        SMART_LOCAL: "Smart Local",
+        CODE_EXPERT: "Code Expert",
+    }
+    route = classify(prompt)
+    return {"model_key": route.model_key, "label": LABEL_MAP.get(route.model_key, "Cloud")}
+
+
+@app.post("/tasks/cloud-approve", response_class=HTMLResponse)
+async def cloud_approve(request: Request, task_id: str = Body(..., embed=True)):
+    if task_id not in task_manager.tasks:
+        raise HTTPException(status_code=404, detail="Task not found")
+    prompt = task_manager.tasks[task_id].prompt
+    task_manager.tasks[task_id].status = "pending"
+    asyncio.create_task(run_task(task_id, prompt))
+    return templates.TemplateResponse(
+        "partials/task-running.html", {"request": request, "task_id": task_id}
+    )
 
 
 @app.get("/tasks/{task_id}/events")

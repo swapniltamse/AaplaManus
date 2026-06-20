@@ -1,0 +1,46 @@
+<div class="wizard">
+  <div class="wizard-status">
+    <div class="dot-green"></div>
+    Local AI System
+  </div>
+
+  <div class="wizard-title">AaplaManus</div>
+
+  <div class="wizard-stats">
+    <div class="stat">
+      <div class="stat-value">$0</div>
+      <div class="stat-label">API Cost</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">0</div>
+      <div class="stat-label">Data Sent Out</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="font-size:13px;line-height:1.2;">Your HW</div>
+      <div class="stat-label">Runs On</div>
+    </div>
+  </div>
+
+  <div class="wizard-desc">
+    To get started, you need Ollama — a free runtime that runs AI models locally.
+    One install, then you're done.
+  </div>
+
+  <a
+    href="https://ollama.com"
+    target="_blank"
+    class="btn-primary"
+    style="text-decoration:none;display:inline-block;padding:12px 32px;">
+    Download Ollama — Free
+  </a>
+
+  <div class="wizard-hint">Takes about 2 minutes. No account, no credit card.</div>
+
+  <button class="btn-secondary" onclick="location.reload()">
+    I installed it — continue
+  </button>
+
+  {% if show_error is defined and show_error %}
+  <div class="wizard-error">Still not detected. Try restarting Ollama, then click again.</div>
+  {% endif %}
+</div>

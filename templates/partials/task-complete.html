@@ -1,0 +1,12 @@
+<div class="feed-header">
+  <div class="feed-mission">Mission complete</div>
+</div>
+
+<div class="complete-card">
+  <pre id="complete-output">{{ output }}</pre>
+  <button
+    class="btn-copy"
+    onclick="navigator.clipboard.writeText(document.getElementById('complete-output').textContent).then(() => this.textContent = 'Copied!')">
+    Copy result
+  </button>
+</div>

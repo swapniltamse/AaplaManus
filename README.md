@@ -1,157 +1,159 @@
-Update 4/6:
+# AaplaManus
 
-![image](https://github.com/user-attachments/assets/4b4ce2fe-a95f-48b0-95f9-2e60392afcff)
-Actual Manus Beta in play
---------------------------------------------------------------------------------------------------------------
+Local-first multi-agent AI system built on [Ollama](https://ollama.com). Run AI agents on your own hardware — no API keys, no monthly bill, no data leaving the machine.
 
-# AAPLA Manus forked from OpenManus
-Autonomous Agent Platform for Learning and Action
+> **Aapla Manus** is Marathi for "our person." The agent runs on your machine, answering to you.
 
-[Official Website](https://openmanus.github.io/)
+Forked from [OpenManus](https://github.com/mannaandpoem/OpenManus) and rebuilt for local-first operation.
 
-Manus is incredible, but OpenManus can achieve any idea without an *Invite Code* 🛫!
+---
 
-For Anthropic's Claude, you need to use their exact model identifiers. The correct model name format for Claude 3.5 Sonnet would be:
-**Copyclaude-3-5-sonnet-20240620
-**
+## What it does
 
+AaplaManus gives you a set of agents — browser, code, research, file — that work together to complete tasks. Every run stays local by default. Cloud is an opt-in escape hatch, not the default.
 
-## Project Demo
+**Three pillars:**
+1. Agent tasks as the core — browse, code, research, read files
+2. Cost savings as the hook — every session shows dollars saved vs GPT-4o
+3. Smart routing — local by default, cloud only when you approve
 
-<video src="https://private-user-images.githubusercontent.com/61239030/420168772-6dcfd0d2-9142-45d9-b74e-d10aa75073c6.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDEzMTgwNTksIm5iZiI6MTc0MTMxNzc1OSwicGF0aCI6Ii82MTIzOTAzMC80MjAxNjg3NzItNmRjZmQwZDItOTE0Mi00NWQ5LWI3NGUtZDEwYWE3NTA3M2M2Lm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAzMDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMzA3VDAzMjIzOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTdiZjFkNjlmYWNjMmEzOTliM2Y3M2VlYjgyNDRlZDJmOWE3NWZhZjE1MzhiZWY4YmQ3NjdkNTYwYTU5ZDA2MzYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.UuHQCgWYkh0OQq9qsUWqGsUbhG3i9jcZDAMeHjLt5T4" data-canonical-src="https://private-user-images.githubusercontent.com/61239030/420168772-6dcfd0d2-9142-45d9-b74e-d10aa75073c6.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDEzMTgwNTksIm5iZiI6MTc0MTMxNzc1OSwicGF0aCI6Ii82MTIzOTAzMC80MjAxNjg3NzItNmRjZmQwZDItOTE0Mi00NWQ5LWI3NGUtZDEwYWE3NTA3M2M2Lm1wND9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAzMDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMzA3VDAzMjIzOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTdiZjFkNjlmYWNjMmEzOTliM2Y3M2VlYjgyNDRlZDJmOWE3NWZhZjE1MzhiZWY4YmQ3NjdkNTYwYTU5ZDA2MzYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.UuHQCgWYkh0OQq9qsUWqGsUbhG3i9jcZDAMeHjLt5T4" controls="controls" muted="muted" class="d-block rounded-bottom-2 border-top width-fit" style="max-height:640px; min-height: 200px"></video>
+---
 
-## Installation
+## Architecture
 
-We provide two installation methods. Method 2 (using uv) is recommended for faster installation and better dependency management.
-
-### Method 1: Using conda
-
-1. Create a new conda environment:
-
-```bash
-conda create -n open_manus python=3.12
-conda activate open_manus
+```
+User (Web UI)
+    |
+FastAPI + SSE (app.py)
+    |
+Orchestrator  →  SmartRouter (keyword classifier, no LLM call)
+    |
+[File Agent] [Browser Agent] [Code Agent] [Research Agent]
+    |
+Ollama (local LLM runtime, OpenAI-compatible API)
+    |
+Cost Service (SQLite, tracks tokens and savings per session)
 ```
 
-2. Clone the repository:
+**Model assignments:**
+
+| Label | Model | Used for |
+|---|---|---|
+| Fast Local | qwen2.5:7b | Routing, simple tasks |
+| Smart Local | llama3.2:latest | Research, synthesis |
+| Code Expert | qwen2.5-coder:14b | Code generation |
+
+---
+
+## Agents
+
+- **FileAgent** — reads files from the workspace, summarizes contents
+- **BrowserAgent** — searches the web, fetches and extracts page text
+- **CodeAgent** — writes and executes Python, retries up to 3x on failure
+- **ResearchAgent** — synthesizes outputs from other agents into a final answer
+- **Orchestrator** — routes the task, chains agents, returns the final result
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Ollama](https://ollama.com) (or let Docker pull it automatically)
+
+### Run with Docker Compose
 
 ```bash
-git clone https://github.com/mannaandpoem/OpenManus.git
-cd OpenManus
+git clone https://github.com/swapniltamse/AaplaManus.git
+cd AaplaManus
+cp config/config.example.toml config/config.toml
+docker compose up
 ```
 
-3. Install dependencies:
+App runs at `http://localhost:3000`.
+
+Ollama starts automatically inside Docker. On first run, pull the models you want:
 
 ```bash
-pip install -r requirements.txt
+docker exec -it aaplamanus-ollama-1 ollama pull llama3.2
+docker exec -it aaplamanus-ollama-1 ollama pull qwen2.5:7b
+docker exec -it aaplamanus-ollama-1 ollama pull qwen2.5-coder:14b
 ```
 
-### Method 2: Using uv (Recommended)
-
-1. Install uv (A fast Python package installer and resolver):
+### Run locally (without Docker)
 
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+git clone https://github.com/swapniltamse/AaplaManus.git
+cd AaplaManus
+cp config/config.example.toml config/config.toml
 
-2. Clone the repository:
-
-```bash
-git clone https://github.com/mannaandpoem/OpenManus.git
-cd OpenManus
-```
-
-3. Create a new virtual environment and activate it:
-
-```bash
-uv venv
-source .venv/bin/activate  # On Unix/macOS
-# Or on Windows:
-# .venv\Scripts\activate
-```
-
-4. Install dependencies:
-
-```bash
+uv venv && source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 uv pip install -r requirements.txt
+
+uvicorn app:app --host 0.0.0.0 --port 3000
 ```
+
+Requires Ollama running at `http://localhost:11434` (default).
+
+---
 
 ## Configuration
 
-OpenManus requires configuration for the LLM APIs it uses. Follow these steps to set up your configuration:
-
-1. Create a `config.toml` file in the `config` directory (you can copy from the example):
-
-```bash
-cp config/config.example.toml config/config.toml
-```
-
-2. Edit `config/config.toml` to add your API keys and customize settings:
+`config/config.toml` (copy from `config.example.toml`):
 
 ```toml
-# Global LLM configuration
 [llm]
-model = "gpt-4o"
-base_url = "https://api.openai.com/v1"
-api_key = "sk-..."  # Replace with your actual API key
+model = "llama3.2:latest"
+base_url = "http://localhost:11434/v1"
+api_key = "ollama"
 max_tokens = 4096
 temperature = 0.0
-
-# Optional configuration for specific LLM models
-[llm.vision]
-model = "gpt-4o"
-base_url = "https://api.openai.com/v1"
-api_key = "sk-..."  # Replace with your actual API key
 ```
 
-## Quick Start
-
-One line for run OpenManus:
+Set `OLLAMA_HOST` env var to override the Ollama URL (useful in Docker):
 
 ```bash
-python main.py
+OLLAMA_HOST=http://ollama:11434
 ```
 
-Then input your idea via terminal!
+---
 
-For unstable version, you also can run:
+## Cost dashboard
+
+Every agent call is tracked. Check your session savings:
+
+```
+GET /dashboard/stats
+```
+
+Returns total tokens used, estimated cost, and savings vs GPT-4o rates.
+
+---
+
+## Tests
 
 ```bash
-python run_flow.py
+.venv/Scripts/python.exe -m pytest tests/ -v   # Windows
+python -m pytest tests/ -v                      # Linux/Mac
 ```
 
-## How to contribute
+42 tests across types, agents, orchestrator, and integration.
 
-We welcome any friendly suggestions and helpful contributions! Just create issues or submit pull requests.
+---
 
-Or contact @mannaandpoem via 📧email: mannaandpoem@gmail.com
+## Roadmap
 
-## Community Group
-Join our networking group on Feishu and share your experience with other developers!
+- [x] Plan 1: Ollama integration, Cost Service, Smart Router, Docker
+- [x] Plan 2: File, Browser, Code, Research agents + Orchestrator
+- [ ] Plan 3: UI redesign — TBD
+- [ ] Plan 4: Setup flow and first-run experience — TBD
+- [ ] Plan 5: Cloud approval dialog and opt-in routing — TBD
+- [ ] Plan 6: Desktop app (Tauri) — TBD
 
-<div align="center" style="display: flex; gap: 20px;">
-    <img src="assets/community_group.jpg" alt="OpenManus 交流群" width="300" />
-</div>
+---
 
-## Star History
+## Acknowledgements
 
-[![Star History Chart](https://api.star-history.com/svg?repos=mannaandpoem/OpenManus&type=Date)](https://star-history.com/#mannaandpoem/OpenManus&Date)
-
-## Acknowledgement
-
-Thanks to [anthropic-computer-use](https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo)
-and [browser-use](https://github.com/browser-use/browser-use) for providing basic support for this project!
-
-OpenManus is built by contributors from MetaGPT. Huge thanks to this agent community!
-
-## Cite
-```bibtex
-@misc{openmanus2025,
-  author = {Xinbin Liang and Jinyu Xiang and Zhaoyang Yu and Jiayi Zhang and Sirui Hong},
-  title = {OpenManus: An open-source framework for building general AI agents},
-  year = {2025},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/mannaandpoem/OpenManus}},
-}
-```
+Built on [OpenManus](https://github.com/mannaandpoem/OpenManus) by the MetaGPT team.
+Browser tooling via [browser-use](https://github.com/browser-use/browser-use).

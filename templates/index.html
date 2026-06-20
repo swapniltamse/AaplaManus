@@ -1,39 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenManus Local Version</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="history-panel">
-            <h2>History Tasks</h2>
-            <div id="task-list" class="task-list"></div>
-        </div>
+{% extends "base.html" %}
 
-        <div class="main-panel">
-            <div id="task-container" class="task-container">
-                <div class="welcome-message">
-                    <h1>Welcome to OpenManus Local Version</h1>
-                    <p>Please enter a task prompt to start a new task</p>
-                </div>
-                <div id="log-container" class="step-container"></div>
-            </div>
+{% block content %}
+<div class="layout">
 
-            <div id="input-container" class="input-container">
-                <input
-                    type="text"
-                    id="prompt-input"
-                    placeholder="Enter task prompt..."
-                    onkeypress="if(event.keyCode === 13) createTask()"
-                >
-                <button onclick="createTask()">Create Task</button>
-            </div>
-        </div>
-    </div>
+  <div class="panel-left"
+    id="history-panel"
+    hx-get="/partials/history"
+    hx-trigger="load, refresh from:#history-panel"
+    hx-swap="innerHTML">
+    <div class="history-empty">Loading...</div>
+  </div>
 
-    <script src="/static/main.js"></script>
-</body>
-</html>
+  <div class="panel-right" id="right-panel">
+    {% if ollama_ok %}
+      {% include "partials/mission-input.html" %}
+    {% else %}
+      {% include "partials/setup-wizard.html" %}
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
