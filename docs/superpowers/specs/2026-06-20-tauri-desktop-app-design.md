@@ -195,7 +195,7 @@ Not included in v1. Windows SmartScreen will warn on first run ("Windows protect
 
 ## Testing
 
-**Local dev:** `cargo tauri dev` — runs the Tauri shell in dev mode. Requires sidecar built first (`./scripts/build-server.ps1`) or `beforeDevCommand` in `tauri.conf.json` pointing to `python app.py`.
+**Local dev:** `cargo tauri dev` — runs the Tauri shell in dev mode. Requires sidecar built first (`./scripts/build-server.ps1`). Alternatively, set `"beforeDevCommand": "python app.py"` in `tauri.conf.json` so Tauri starts the server automatically during `cargo tauri dev`.
 
 **Build verification (manual):**
 1. `./scripts/build-server.ps1` — confirms PyInstaller output
