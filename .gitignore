@@ -174,3 +174,9 @@ cython_debug/
 .pypirc
 config/config.toml
 workspace/*.db
+.superpowers/
+
+# Tauri
+src-tauri/binaries/
+src-tauri/target/
+src-tauri/gen/
