@@ -2,13 +2,14 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 Write-Host "Installing PyInstaller..."
-python -m pip install pyinstaller
+python -m pip install "pyinstaller==6.11.0"
 
 Write-Host "Building aaplamanus-server.exe..."
 pyinstaller app.py `
     --name aaplamanus-server `
     --onefile `
     --noconfirm `
+    --clean `
     --hidden-import app.cost_service `
     --hidden-import app.router `
     --hidden-import app.orchestrator `
@@ -50,6 +51,11 @@ pyinstaller app.py `
     --add-data "templates;templates" `
     --add-data "static;static" `
     --distpath src-tauri/binaries
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "PyInstaller failed with exit code $LASTEXITCODE"
+    exit $LASTEXITCODE
+}
 
 # Tauri v2 sidecar naming: <name>-<arch>-<vendor>-<os>.exe
 $src = "src-tauri/binaries/aaplamanus-server.exe"
