@@ -144,7 +144,7 @@ fn set_tray_icon(app: &tauri::AppHandle, icon_file: &str) {
 fn poll_until_ready(app: tauri::AppHandle, should_stop: Arc<AtomicBool>) {
     let addr: std::net::SocketAddr = "127.0.0.1:5172".parse().unwrap();
     let start = std::time::Instant::now();
-    let timeout = std::time::Duration::from_secs(30);
+    let timeout = std::time::Duration::from_secs(60);
 
     loop {
         if should_stop.load(Ordering::Relaxed) {
@@ -165,7 +165,7 @@ fn poll_until_ready(app: tauri::AppHandle, should_stop: Arc<AtomicBool>) {
         .is_ok()
         {
             // Wait 1s for Uvicorn to finish loading routes after binding the port
-            std::thread::sleep(std::time::Duration::from_secs(1));
+            std::thread::sleep(std::time::Duration::from_secs(3));
             set_tray_icon(&app, "tray-green.png");
             if let Some(w) = app.get_webview_window("main") {
                 let _ = w.show();
