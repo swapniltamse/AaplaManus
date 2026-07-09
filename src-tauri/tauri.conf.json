@@ -1,0 +1,39 @@
+{
+  "productName": "AaplaManus",
+  "version": "0.1.0",
+  "identifier": "com.aaplamanus.app",
+  "build": {
+    "beforeDevCommand": "python ../app.py",
+    "devUrl": "http://localhost:5172",
+    "frontendDist": "http://localhost:5172"
+  },
+  "bundle": {
+    "active": true,
+    "targets": "nsis",
+    "icon": [
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
+    "externalBin": [
+      "binaries/aaplamanus-server"
+    ],
+    "resources": [
+      "icons/tray-amber.png",
+      "icons/tray-green.png",
+      "icons/tray-red.png"
+    ]
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "AaplaManus",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "center": true,
+        "visible": false
+      }
+    ]
+  }
+}
